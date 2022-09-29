@@ -12,3 +12,12 @@ def intcolora(n):
 
 def normalcolor(n):
         return (n/250)
+
+
+def intensidadColor(arreglo,intensity):
+        r = int(min(255,max(0,arreglo[0]*intensity)))
+        g = int(min(255,max(0,arreglo[1]*intensity)))
+        b = int(min(255,max(0,arreglo[2]*intensity)))
+        
+        return (r,g,b)
+        
