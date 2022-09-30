@@ -1,6 +1,8 @@
 
 from WriteUtilities import * 
 
+def reflect(I,N):
+    return (I - N * 2 * (N @ I)).normalize()
 
 def writebmp(filename,width,height,framebuffer):
     f = open(filename, 'bw')

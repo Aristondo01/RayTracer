@@ -1,6 +1,9 @@
+from vector import V3
+
+
 class Light:
-    def __init__(self,position, intensity):
+    def __init__(self,position, intensity, color=V3(255,255,255)):
         self.position = position
-        self.intendity = intensity
-        self.color = (0,0,0)
+        self.intensity = intensity
+        self.color = color
         

@@ -1,6 +1,7 @@
 from code import interact
 import math
 from random import random
+from tokenize import Special
 from Lib import *
 from Color import *
 from light import Light
@@ -22,7 +23,7 @@ class Raytracer(object):
         self.tangente = math.tan(self.fov/2)
         self.density=1
         self.scene=[]
-        self.light = Light(V3(0,0,0),1)
+        self.light = Light(V3(5,-5,0),1.5,V3(255,255,255))
         self.clear()
     
     def clear (self):
@@ -43,12 +44,25 @@ class Raytracer(object):
         if material is None:
             return self.clear_color
         
+        
+        #Diffuse 
         light_direction = (self.light.position - intersect.point).normalize()
-        intensity = light_direction @ intersect.normal
+        diffuse_intensity = light_direction @ intersect.normal
+        diffuse = intensidadColor(material.diffuse,diffuse_intensity)
+        diffuse = V3(*diffuse) * material.albedo[0]
         
-        diffuse = intensidadColor(material.diffuse,intensity)
+        #Specular
+        light_reflection = reflect(light_direction,intersect.normal)
+        specular_intensity = self.light.intensity * max(0,(light_reflection @ direction)) **material.spec
         
-        return diffuse
+        specular = self.light.color * specular_intensity * material.albedo[1]
+        
+        diffuse = diffuse + specular
+        
+        
+        
+
+        return (int(diffuse.x),int(diffuse.y),int(diffuse.z))
         
         
         
@@ -65,9 +79,10 @@ class Raytracer(object):
                     zbuffer = object_intersect.distance
                     material = s.material
                     intersect = object_intersect
+                    
         return material, intersect
         
-        
+      
     
     def render(self,nombre):
         self.current_color=(0,255,0)
@@ -93,31 +108,47 @@ class Raytracer(object):
 r=Raytracer(800,800)
 r.density=1
 
-white = Material(diffuse=(255,255,255))
-black = Material(diffuse=(0,0,0))
-naranja = Material(diffuse=(255,128,0))
-red = Material(diffuse=(255,0,0))
-r.clear_color=(0,255,255)
+glass = Material(diffuse=(176,223,254),albedo=[0.695,0.305],spec=150)
+wood = Material(diffuse=(149,69,53),albedo=[0.85,0.25],spec=5)
+ice = Material(diffuse=(0,0,0),albedo=[0.85,0.1],spec=1)
+
+ice2 = Material(diffuse=(255,150,150),albedo=[0.695,0.305],spec=10)
+
+
+
+
+
+r.clear_color=(255,255,255)
+
 
 #'''
 r.scene=[
-         Sphere(V3(0,-1.5,-20),1.5,white), #Cabeza
-         Sphere(V3(0,5,-20),3,white), #Piernas
-         Sphere(V3(0,1,-20),2,white), #Cuerpo
-         Sphere(V3(-0.5,-1.8,-16),0.2,black), #Ojo izquierdo
-         Sphere(V3(0.5,-1.8,-16),0.2,black), #Ojo derecho
-         Sphere(V3(0,-1.4,-16),0.2,naranja), #Nariz
-         Sphere(V3(0,-0.2,-16),0.2,black), #boton
-         Sphere(V3(0,0.8,-16),0.2,black), #boton
-         Sphere(V3(0,1.8,-16),0.2,black), #boton
+         Sphere(V3(0,-1.5,-8),1.2,wood), #Cabeza
+         Sphere(V3(0,1,-8),1.5,glass), #Cuerpo
+         Sphere(V3(-0.8,1.8,-6),0.5,wood), #Pierna izquierda
+         Sphere(V3(0.8,1.8,-6),0.5,wood), #Pierna derecha
+         
+         Sphere(V3(-1.1,-0.2,-6),0.5,wood), #mano izquierda
+         Sphere(V3(1.1,-0.2,-6),0.5,wood), #mano derecha
+         
+         Sphere(V3(-0.8,-1.8,-6),0.4,wood), #oreja izquierda
+         Sphere(V3(0.8,-1.8,-6),0.4,wood), #oreja derecha
+         
+         Sphere(V3(-0.3,-1.4,-6),0.1,ice), #ojo izquierda
+         Sphere(V3(0.3,-1.4,-6),0.1,ice), #ojo derecha
+         
+         Sphere(V3(0,-0.7,-5),0.3,ice2), #ojo derecha
+         
+         
+         
          ]
 '''
 r.scene = [
-    Sphere(V3(-6, 0, -16), 2.5, red),
-    Sphere(V3(5, 0, -16), 2.5, red),
-    Sphere(V3(-0.5, 0, -10), 2.5, white)
+    Sphere(V3(-6, 0, -16), 2.5, rubber),
+    Sphere(V3(5, 0, -16), 2.5, rubber),
+    Sphere(V3(-0.5, 0, -10), 2.5, ivory)
 ]'''
-r.render("Prueba2")
+r.render("Prueba")
    
   
                    
