@@ -1,3 +1,5 @@
+from vector import V3
+
 class Material:
     def __init__(self, diffuse,albedo,spec):
         self.diffuse = diffuse

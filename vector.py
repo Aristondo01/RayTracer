@@ -5,18 +5,32 @@ class V3(object):
         self.z=z
     
     def __add__(self,other):
-        return V3(
-            self.x + other.x,
-            self.y + other.y,
-            self.z + other.z,
-        )
+        if(type(other)== int or type(other)== float):
+            return V3(
+                self.x + other,
+                self.y + other,
+                self.z + other,
+            )
+        else:
+            return V3(
+                self.x + other.x,
+                self.y + other.y,
+                self.z + other.z,
+            )
         
     def __sub__(self,other):
-        return V3(
-            self.x - other.x,
-            self.y - other.y,
-            self.z - other.z,
-        )
+        if(type(other)== int or type(other)== float):
+            return V3(
+                self.x - other,
+                self.y - other,
+                self.z - other,
+            )
+        else:
+            return V3(
+                self.x - other.x,
+                self.y - other.y,
+                self.z - other.z,
+            )
     
     def round(self):
         self.x=round(self.x)

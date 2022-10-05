@@ -1,3 +1,4 @@
+from audioop import reverse
 from code import interact
 import math
 from random import random
@@ -11,6 +12,8 @@ import random
 from sphere import *
 from light import *
 
+MAX_RECURSION_DEPTH =3
+
 class Raytracer(object):
     def __init__(self,width,height):
         self.width = width
@@ -23,7 +26,7 @@ class Raytracer(object):
         self.tangente = math.tan(self.fov/2)
         self.density=1
         self.scene=[]
-        self.light = Light(V3(5,-5,0),1.5,V3(255,255,255))
+        self.light = Light(V3(0,-5,0),1.5,V3(255,255,255))
         self.clear()
     
     def clear (self):
@@ -38,12 +41,19 @@ class Raytracer(object):
     def write(self,filename):
         writebmp(filename,self.width,self.height,self.framebuffer)
         
-    def cast_ray(self,origin,direction):
+    def cast_ray(self,origin,direction, recursion=0):
+        shadow_bais = 1.1
+        if recursion >= MAX_RECURSION_DEPTH:
+            return self.clear_color
+        
+        
         material, intersect = self.scene_intersect(origin,direction)
         
         if material is None:
             return self.clear_color
         
+       
+            
         
         #Diffuse 
         light_direction = (self.light.position - intersect.point).normalize()
@@ -59,9 +69,29 @@ class Raytracer(object):
         
         diffuse = diffuse + specular
         
+        #shadow
+        shadow_origin = intersect.point + (intersect.normal * shadow_bais)
+        shadow_material, shadow_intecsect =self.scene_intersect(shadow_origin,light_direction)
+        
+        shadow_intensity = 1
+        if shadow_material:
+            shadow_intensity = 0.3
+            
+        diffuse = V3(*material.diffuse) * diffuse_intensity * material.albedo[0] * shadow_intensity
         
         
-
+        #refractions
+        if material.albedo[2]:
+            reverse_direction = direction *-1
+            reflect_direction = reflect(reverse_direction,intersect.normal)
+            reflect_bias = -0.5 if reflect_direction @ intersect.normal < 0 else 0.5
+            reflect_origin = intersect.point + (intersect.normal * reflect_bias)
+            reflect_color = V3(*self.cast_ray(reflect_origin,reflect_direction,recursion+1))
+        else:
+            reflect_color =V3(0,0,0)
+        
+        reflection = reflect_color * material.albedo[2]
+        diffuse= diffuse + reflection +specular
         return (int(diffuse.x),int(diffuse.y),int(diffuse.z))
         
         
@@ -114,6 +144,12 @@ ice = Material(diffuse=(0,0,0),albedo=[0.85,0.1],spec=1)
 
 ice2 = Material(diffuse=(255,150,150),albedo=[0.695,0.305],spec=10)
 
+rubber = Material(diffuse=(180,0,0),albedo=[0.9,0.1,0],spec=10)
+ivory = Material(diffuse=(200,200,0),albedo=[0.6,0.3,0],spec=50)
+mirror = Material(diffuse=(255,255,255),albedo=[0,1,0.8],spec=1425)
+
+
+
 
 
 
@@ -121,7 +157,7 @@ ice2 = Material(diffuse=(255,150,150),albedo=[0.695,0.305],spec=10)
 r.clear_color=(255,255,255)
 
 
-#'''
+'''
 r.scene=[
          Sphere(V3(0,-1.5,-8),1.2,wood), #Cabeza
          Sphere(V3(0,1,-8),1.5,glass), #Cuerpo
@@ -143,11 +179,13 @@ r.scene=[
          
          ]
 '''
+r.light = Light(V3(-20, 20, 20), 2,V3(255, 255, 255))
 r.scene = [
-    Sphere(V3(-6, 0, -16), 2.5, rubber),
-    Sphere(V3(5, 0, -16), 2.5, rubber),
-    Sphere(V3(-0.5, 0, -10), 2.5, ivory)
-]'''
+    Sphere(V3(0, -1.5, -10), 1.5, ivory),
+    Sphere(V3(-2, -1, -12), 2, mirror),
+    Sphere(V3(1, 1, -8), 1.7, rubber),
+    Sphere(V3(-2, 2, -10), 2, mirror),
+]#'''
 r.render("Prueba")
    
   
