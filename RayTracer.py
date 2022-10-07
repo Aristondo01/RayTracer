@@ -1,13 +1,9 @@
-from audioop import reverse
-from code import interact
 import math
 from random import random
-from tokenize import Special
 from Lib import *
 from Color import *
 from light import Light
 from material import Material
-from vector import V3
 import random
 from sphere import *
 from light import *
@@ -67,7 +63,7 @@ class Raytracer(object):
         
         specular = self.light.color * specular_intensity * material.albedo[1]
         
-        diffuse = diffuse + specular
+        #diffuse = diffuse + specular
         
         #shadow
         shadow_origin = intersect.point + (intersect.normal * shadow_bais)
@@ -80,10 +76,10 @@ class Raytracer(object):
         diffuse = V3(*material.diffuse) * diffuse_intensity * material.albedo[0] * shadow_intensity
         
         
-        #refractions
-        if material.albedo[2]:
-            reverse_direction = direction *-1
-            reflect_direction = reflect(reverse_direction,intersect.normal)
+        #reflection
+        if material.albedo[2] > 0:
+            
+            reflect_direction = reflect(direction,intersect.normal)
             reflect_bias = -0.5 if reflect_direction @ intersect.normal < 0 else 0.5
             reflect_origin = intersect.point + (intersect.normal * reflect_bias)
             reflect_color = V3(*self.cast_ray(reflect_origin,reflect_direction,recursion+1))
@@ -91,7 +87,19 @@ class Raytracer(object):
             reflect_color =V3(0,0,0)
         
         reflection = reflect_color * material.albedo[2]
-        diffuse= diffuse + reflection +specular
+        
+        #refractions
+        if material.albedo[3] > 0:
+            refract_direction = refract(direction,intersect.normal, material.refractive_index)
+            refract_bias = -0.5 if refract_direction @ intersect.normal < 0 else 0.5
+            refract_origin = intersect.point + (intersect.normal * refract_bias)
+            refract_color = V3(*self.cast_ray(refract_origin,refract_direction,recursion+1))
+        else:
+            refract_color =V3(0,0,0)
+        
+        refraction = refract_color * material.albedo[3]
+        
+        diffuse= diffuse + reflection +specular +  refraction
         return (int(diffuse.x),int(diffuse.y),int(diffuse.z))
         
         
@@ -138,15 +146,15 @@ class Raytracer(object):
 r=Raytracer(800,800)
 r.density=1
 
-glass = Material(diffuse=(176,223,254),albedo=[0.695,0.305],spec=150)
 wood = Material(diffuse=(149,69,53),albedo=[0.85,0.25],spec=5)
 ice = Material(diffuse=(0,0,0),albedo=[0.85,0.1],spec=1)
 
 ice2 = Material(diffuse=(255,150,150),albedo=[0.695,0.305],spec=10)
 
-rubber = Material(diffuse=(180,0,0),albedo=[0.9,0.1,0],spec=10)
-ivory = Material(diffuse=(200,200,0),albedo=[0.6,0.3,0],spec=50)
-mirror = Material(diffuse=(255,255,255),albedo=[0,1,0.8],spec=1425)
+rubber = Material(diffuse=(80,0,0),albedo=[0.9, 0.1, 0, 0],spec=10)
+ivory = Material(diffuse=(100,100,80),albedo=[0.695, 0.305, 0.1, 0],spec=50)
+mirror = Material(diffuse=(255,255,255),albedo=[0, 1, 0.8, 0],spec=1425)
+glass = Material(diffuse=(150,180,200),albedo=[0, 0.5 ,0.1, 0.8],spec=125, refractive_index=1.5)
 
 
 
@@ -154,38 +162,19 @@ mirror = Material(diffuse=(255,255,255),albedo=[0,1,0.8],spec=1425)
 
 
 
-r.clear_color=(255,255,255)
 
 
-'''
-r.scene=[
-         Sphere(V3(0,-1.5,-8),1.2,wood), #Cabeza
-         Sphere(V3(0,1,-8),1.5,glass), #Cuerpo
-         Sphere(V3(-0.8,1.8,-6),0.5,wood), #Pierna izquierda
-         Sphere(V3(0.8,1.8,-6),0.5,wood), #Pierna derecha
-         
-         Sphere(V3(-1.1,-0.2,-6),0.5,wood), #mano izquierda
-         Sphere(V3(1.1,-0.2,-6),0.5,wood), #mano derecha
-         
-         Sphere(V3(-0.8,-1.8,-6),0.4,wood), #oreja izquierda
-         Sphere(V3(0.8,-1.8,-6),0.4,wood), #oreja derecha
-         
-         Sphere(V3(-0.3,-1.4,-6),0.1,ice), #ojo izquierda
-         Sphere(V3(0.3,-1.4,-6),0.1,ice), #ojo derecha
-         
-         Sphere(V3(0,-0.7,-5),0.3,ice2), #ojo derecha
-         
-         
-         
-         ]
-'''
+r.clear_color=(0,0,100)
+
+
 r.light = Light(V3(-20, 20, 20), 2,V3(255, 255, 255))
 r.scene = [
     Sphere(V3(0, -1.5, -10), 1.5, ivory),
-    Sphere(V3(-2, -1, -12), 2, mirror),
+    Sphere(V3(0, 0, -5), 0.5, glass),
     Sphere(V3(1, 1, -8), 1.7, rubber),
-    Sphere(V3(-2, 2, -10), 2, mirror),
+    Sphere(V3(-2, 1, -10), 2, mirror),
 ]#'''
+
 r.render("Prueba")
    
   
