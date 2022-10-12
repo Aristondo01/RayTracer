@@ -7,7 +7,7 @@ class Sphere(object):
     
     def ray_intersect(self,origin,direction):
         L = self.center - origin
-        tca = L @ direction
+        tca = direction @ L
         
         d2 = L.length() **2 -tca**2
         

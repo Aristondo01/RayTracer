@@ -6,6 +6,7 @@ from light import Light
 from material import Material
 import random
 from sphere import *
+from plane import *
 from light import *
 
 MAX_RECURSION_DEPTH =3
@@ -24,6 +25,7 @@ class Raytracer(object):
         self.scene=[]
         self.light = Light(V3(0,-5,0),1.5,V3(255,255,255))
         self.clear()
+        self.EnvMap = None
     
     def clear (self):
         self.framebuffer=[
@@ -36,6 +38,12 @@ class Raytracer(object):
             
     def write(self,filename):
         writebmp(filename,self.width,self.height,self.framebuffer)
+    
+    def get_background(self):
+        if self.EnvMap:
+            return self.EnvMap.get_color()
+        else:
+            return self.clear_color
         
     def cast_ray(self,origin,direction, recursion=0):
         shadow_bais = 1.1
@@ -169,6 +177,7 @@ r.clear_color=(0,0,100)
 
 r.light = Light(V3(-20, 20, 20), 2,V3(255, 255, 255))
 r.scene = [
+    Plane(V3(0,2.5,-6),2,2, mirror),
     Sphere(V3(0, -1.5, -10), 1.5, ivory),
     Sphere(V3(0, 0, -5), 0.5, glass),
     Sphere(V3(1, 1, -8), 1.7, rubber),
