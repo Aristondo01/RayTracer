@@ -6,7 +6,11 @@ from light import Light
 from material import Material
 import random
 from sphere import *
-from plane import *
+from planeh import *
+from planef import *
+from planel import *
+from cube import *
+
 from light import *
 
 MAX_RECURSION_DEPTH =3
@@ -140,7 +144,7 @@ class Raytracer(object):
                 if (prob < self.density):
                 
                     i=((2 * (x +0.5 ) / self.width) - 1) * self.ImageAspectRatio * self.tangente
-                    j=(1 - (2 * (y + 0.5) / self.height)) * self.tangente
+                    j=((2 * (y + 0.5) / self.height)-1) * self.tangente
                                         
                     direction = V3(i,j,-1).normalize()
                     origin = V3(0,0,0)
@@ -159,7 +163,7 @@ ice = Material(diffuse=(0,0,0),albedo=[0.85,0.1],spec=1)
 
 ice2 = Material(diffuse=(255,150,150),albedo=[0.695,0.305],spec=10)
 
-rubber = Material(diffuse=(80,0,0),albedo=[0.9, 0.1, 0, 0],spec=10)
+rubber = Material(diffuse=(180,0,0),albedo=[0.9, 0.1, 0, 0],spec=10)
 ivory = Material(diffuse=(100,100,80),albedo=[0.695, 0.305, 0.1, 0],spec=50)
 mirror = Material(diffuse=(255,255,255),albedo=[0, 1, 0.8, 0],spec=1425)
 glass = Material(diffuse=(150,180,200),albedo=[0, 0.5 ,0.1, 0.8],spec=125, refractive_index=1.5)
@@ -175,14 +179,31 @@ glass = Material(diffuse=(150,180,200),albedo=[0, 0.5 ,0.1, 0.8],spec=125, refra
 r.clear_color=(0,0,100)
 
 
+center = (1,1,-5)
+width = 1
+height = 1
+
+
 r.light = Light(V3(-20, 20, 20), 2,V3(255, 255, 255))
 r.scene = [
-    Plane(V3(0,2.5,-6),2,2, mirror),
-    Sphere(V3(0, -1.5, -10), 1.5, ivory),
-    Sphere(V3(0, 0, -5), 0.5, glass),
-    Sphere(V3(1, 1, -8), 1.7, rubber),
-    Sphere(V3(-2, 1, -10), 2, mirror),
+    #PlaneH(V3(0,2.5,-6),2,2, mirror),
+    
+    #Sphere(V3(0, -1.5, -10), 1.5, ivory),
+    #Sphere(V3(0, 0, -5), 0.5, glass),
+    #Sphere(V3(1, 1, -8), 1.7, rubber),
+    #PlaneL(V3(-4,1,-8),10,10, mirror),
+    #PlaneF(V3(0,1,-10),10,10, mirror),
+    Cube((-1,1,-5),1,rubber),
+    Cube((1,1,-5),1,ivory),
+    Cube((1,-1,-5),1,rubber)
+    
+    
+    
+    #Sphere(V3(-2, 1, -10), 2, mirror),
 ]#'''
+
+
+
 
 r.render("Prueba")
    
