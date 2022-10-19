@@ -8,6 +8,8 @@ class PlaneL(object):
         self.height = height
         self.material = material
         self.normal = V3(normal,0,0)
+        self.wmin = center.z-width/2
+        self.ymin = center.y-width/2
     
     def ray_intersect(self,origin,direction):
        
@@ -24,4 +26,5 @@ class PlaneL(object):
             distance = d,
             point = impact,
             normal= self.normal
+            
             )

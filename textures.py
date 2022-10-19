@@ -1,15 +1,11 @@
-import numpy 
-import mmap
 import struct
-from math import atan2, pi, acos
-from vector import V3
 from Color import *
-
-
-class Envmap(object):
-    def __init__(self, path):
-        self.path = path+".bmp"
-        self.pixels=None
+class Texture:
+    
+    def __init__(self,path):
+        self.path=path
+        self.width=0
+        self.heigth=0
         self.read()
     
     def read(self):
@@ -30,17 +26,24 @@ class Envmap(object):
                     r= ord(image.read(1))
                     
                     self.pixels[y].append((r,g,b))
-
-
-    def get_color(self, direction):
-        direction = direction.normalize()
-        x = int((atan2(direction.z, direction.x) / (2 * pi) + 0.5) * self.width)
-        y = int(acos(-direction.y) / pi * self.heigth)
+            
+    def get_color(self,tx,ty):
+        x=round(tx*self.width)
+        y=round(ty*self.heigth)
         
-        """print(acos(-direction.y / pi))
-        print()
-        print(x,y)
-        print(len(self.pixels),len(self.pixels[0]))
-        print()"""
         return self.pixels[y][x]
+    
+    def intensity(self,tx,ty,intensity):
+        x=round(tx*(self.width-1))
+        y=round(ty*(self.heigth-1))
         
+        b= round(self.pixels[y][x][0]*intensity)
+        g= round(self.pixels[y][x][1]*intensity)
+        r= round(self.pixels[y][x][2]*intensity)
+        
+        b=max(0,min(b,255))
+        g=max(0,min(g,255))
+        r=max(0,min(r,255))
+        
+        return rgbcolor(b,g,r)
+     

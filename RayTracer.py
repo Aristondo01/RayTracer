@@ -10,7 +10,7 @@ from planeh import *
 from planef import *
 from planel import *
 from cube import *
-
+from envmap import *
 from light import *
 
 MAX_RECURSION_DEPTH =3
@@ -31,6 +31,9 @@ class Raytracer(object):
         self.clear()
         self.EnvMap = None
     
+    def setEnvMap(self,path):
+        self.EnvMap = Envmap(path)
+    
     def clear (self):
         self.framebuffer=[
             [rgbcolor(*self.clear_color) for x in range(self.width)]
@@ -43,22 +46,22 @@ class Raytracer(object):
     def write(self,filename):
         writebmp(filename,self.width,self.height,self.framebuffer)
     
-    def get_background(self):
+    def get_background(self,direction):
         if self.EnvMap:
-            return self.EnvMap.get_color()
+            return self.EnvMap.get_color(direction)
         else:
             return self.clear_color
         
     def cast_ray(self,origin,direction, recursion=0):
         shadow_bais = 1.1
         if recursion >= MAX_RECURSION_DEPTH:
-            return self.clear_color
+            return self.get_background(direction)
         
         
         material, intersect = self.scene_intersect(origin,direction)
         
         if material is None:
-            return self.clear_color
+            return self.get_background(direction)
         
        
             
@@ -155,57 +158,7 @@ class Raytracer(object):
         
     
         
-r=Raytracer(800,800)
-r.density=1
 
-wood = Material(diffuse=(149,69,53),albedo=[0.85,0.25],spec=5)
-ice = Material(diffuse=(0,0,0),albedo=[0.85,0.1],spec=1)
-
-ice2 = Material(diffuse=(255,150,150),albedo=[0.695,0.305],spec=10)
-
-rubber = Material(diffuse=(180,0,0),albedo=[0.9, 0.1, 0, 0],spec=10)
-ivory = Material(diffuse=(100,100,80),albedo=[0.695, 0.305, 0.1, 0],spec=50)
-mirror = Material(diffuse=(255,255,255),albedo=[0, 1, 0.8, 0],spec=1425)
-glass = Material(diffuse=(150,180,200),albedo=[0, 0.5 ,0.1, 0.8],spec=125, refractive_index=1.5)
-
-
-
-
-
-
-
-
-
-r.clear_color=(0,0,100)
-
-
-center = (1,1,-5)
-width = 1
-height = 1
-
-
-r.light = Light(V3(-20, 20, 20), 2,V3(255, 255, 255))
-r.scene = [
-    #PlaneH(V3(0,2.5,-6),2,2, mirror),
-    
-    #Sphere(V3(0, -1.5, -10), 1.5, ivory),
-    #Sphere(V3(0, 0, -5), 0.5, glass),
-    #Sphere(V3(1, 1, -8), 1.7, rubber),
-    #PlaneL(V3(-4,1,-8),10,10, mirror),
-    #PlaneF(V3(0,1,-10),10,10, mirror),
-    Cube((-1,1,-5),1,rubber),
-    Cube((1,1,-5),1,ivory),
-    Cube((1,-1,-5),1,rubber)
-    
-    
-    
-    #Sphere(V3(-2, 1, -10), 2, mirror),
-]#'''
-
-
-
-
-r.render("Prueba")
    
   
                    

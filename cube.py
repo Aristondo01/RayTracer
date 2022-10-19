@@ -28,15 +28,20 @@ class Cube(object):
         ar = self.arriba.ray_intersect(origin,direction)
         ab = self.abajo.ray_intersect(origin,direction)
         fr = self.frente.ray_intersect(origin,direction)
-
-        interseccion = [iz,de,ar,ab,fr]
-       
-        menor = 99999
-        inter = 0
-        for i in range(len(interseccion)):
-            if interseccion[i]:
-                if interseccion[i].distance < menor:
-                    menor =interseccion[i].distance
-                    inter = interseccion[i]
-               
-        return inter
+        
+        if iz:
+            return iz
+        
+        if de:
+            return de
+        
+        if ar:
+            return ar
+        
+        if ab:
+            return ab
+        
+        if fr:
+            return fr
+        
+        return None

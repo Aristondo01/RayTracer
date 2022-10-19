@@ -8,6 +8,9 @@ class PlaneF(object):
         self.height = height
         self.material = material
         self.normal = V3(0,0,normal)
+        self.wmin = center.x-width/2
+        self.ymin = center.y-width/2
+        
 
     
     def ray_intersect(self,origin,direction):
