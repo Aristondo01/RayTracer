@@ -8,7 +8,7 @@ class PlaneF(object):
         self.height = height
         self.material = material
         self.normal = V3(0,0,normal)
-        self.wmin = center.x-width/2
+        self.xmin = center.x-width/2
         self.ymin = center.y-width/2
         
 
@@ -27,5 +27,6 @@ class PlaneF(object):
         return Intersect(
             distance = d,
             point = impact,
-            normal= self.normal
+            normal= self.normal,
+            porcentaje = ((impact.x - self.xmin)/self.width,(impact.y - self.ymin)/self.width)
             )

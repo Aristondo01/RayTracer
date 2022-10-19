@@ -63,7 +63,9 @@ class Raytracer(object):
         if material is None:
             return self.get_background(direction)
         
-       
+        if material.textura:
+            material.diffuse = material.textura.get_color(*intersect.porcentaje)
+            
             
         
         #Diffuse 
@@ -78,7 +80,6 @@ class Raytracer(object):
         
         specular = self.light.color * specular_intensity * material.albedo[1]
         
-        #diffuse = diffuse + specular
         
         #shadow
         shadow_origin = intersect.point + (intersect.normal * shadow_bais)
@@ -87,7 +88,9 @@ class Raytracer(object):
         shadow_intensity = 1
         if shadow_material:
             shadow_intensity = 0.3
-            
+        
+        
+         
         diffuse = V3(*material.diffuse) * diffuse_intensity * material.albedo[0] * shadow_intensity
         
         

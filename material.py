@@ -7,7 +7,7 @@ class Material:
         self.spec = spec
         self.refractive_index = refractive_index
         if path:
-            self.textura = Texture(path)
+            self.textura = Texture(path+".bmp")
         else:
             self.textura = None
         

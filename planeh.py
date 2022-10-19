@@ -8,7 +8,7 @@ class PlaneH(object):
         self.height = height
         self.material = material
         self.normal = V3(0,normal,0)
-        self.wmin = center.x-width/2
+        self.xmin = center.x-width/2
         self.ymin = center.z-width/2
     
     def ray_intersect(self,origin,direction):
@@ -25,5 +25,6 @@ class PlaneH(object):
         return Intersect(
             distance = d,
             point = impact,
-            normal= self.normal
+            normal= self.normal,
+            porcentaje = ((impact.x - self.xmin)/self.width,(impact.z - self.ymin)/self.width)
             )
