@@ -62,9 +62,14 @@ class Raytracer(object):
         
         if material is None:
             return self.get_background(direction)
-        
+                
         if material.textura:
             material.diffuse = material.textura.get_color(*intersect.porcentaje)
+            
+        #if material.diffuse <= (6,6,6):
+        #    return self.get_background(direction)
+            
+                            
             
             
         
@@ -114,6 +119,11 @@ class Raytracer(object):
             refract_color = V3(*self.cast_ray(refract_origin,refract_direction,recursion+1))
         else:
             refract_color =V3(0,0,0)
+            if material.diffuse <= (6,6,6):
+                refract_direction = refract(direction,intersect.normal, material.refractive_index)
+                refract_bias = -0.5 if refract_direction @ intersect.normal < 0 else 0.5
+                refract_origin = intersect.point + (intersect.normal * refract_bias)
+                diffuse = V3(*self.cast_ray(refract_origin,refract_direction,recursion+1))
         
         refraction = refract_color * material.albedo[3]
         

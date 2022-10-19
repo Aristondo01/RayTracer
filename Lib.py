@@ -18,8 +18,11 @@ def refract(I,N,roi):
         etai*=-1
         etat*=-1
         N*=-1
-        
-    eta = etai/etat
+    
+    try:
+        eta = etai/etat
+    except:
+        eta =1
     
     k = 1 - eta**2 * (1 - cosi**2)
     

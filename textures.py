@@ -1,5 +1,6 @@
 import struct
 from Color import *
+import random
 class Texture:
     
     def __init__(self,path):
