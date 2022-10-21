@@ -30,8 +30,8 @@ class Texture:
             
     def get_color(self,tx,ty):
         
-        x=round(tx*(self.width-1))
-        y=round(ty*(self.heigth-1))
+        x=int(tx*(self.width-1))
+        y=int(ty*(self.heigth-1))
         
         return self.pixels[y][x]
     

@@ -13,7 +13,7 @@ from cube import *
 from envmap import *
 from light import *
 
-MAX_RECURSION_DEPTH =3
+MAX_RECURSION_DEPTH =2
 
 class Raytracer(object):
     def __init__(self,width,height):
@@ -53,7 +53,7 @@ class Raytracer(object):
             return self.clear_color
         
     def cast_ray(self,origin,direction, recursion=0):
-        shadow_bais = 1.1
+        shadow_bais = 1.2
         if recursion >= MAX_RECURSION_DEPTH:
             return self.get_background(direction)
         
@@ -66,13 +66,8 @@ class Raytracer(object):
         if material.textura:
             material.diffuse = material.textura.get_color(*intersect.porcentaje)
             
-        #if material.diffuse <= (6,6,6):
-        #    return self.get_background(direction)
             
                             
-            
-            
-        
         #Diffuse 
         light_direction = (self.light.position - intersect.point).normalize()
         diffuse_intensity = light_direction @ intersect.normal
@@ -108,6 +103,7 @@ class Raytracer(object):
             reflect_color = V3(*self.cast_ray(reflect_origin,reflect_direction,recursion+1))
         else:
             reflect_color =V3(0,0,0)
+           
         
         reflection = reflect_color * material.albedo[2]
         
@@ -119,12 +115,15 @@ class Raytracer(object):
             refract_color = V3(*self.cast_ray(refract_origin,refract_direction,recursion+1))
         else:
             refract_color =V3(0,0,0)
-            if material.diffuse <= (6,6,6):
-                refract_direction = refract(direction,intersect.normal, material.refractive_index)
+            if material.diffuse[1] >= 255:
+                refract_direction = refract(direction,intersect.normal, 1)
                 refract_bias = -0.5 if refract_direction @ intersect.normal < 0 else 0.5
                 refract_origin = intersect.point + (intersect.normal * refract_bias)
                 diffuse = V3(*self.cast_ray(refract_origin,refract_direction,recursion+1))
-        
+
+            
+            
+                    
         refraction = refract_color * material.albedo[3]
         
         diffuse= diffuse + reflection +specular +  refraction

@@ -8,8 +8,8 @@ class PlaneL(object):
         self.height = height
         self.material = material
         self.normal = V3(normal,0,0)
-        self.xmin = center.z-width/2
-        self.ymin = center.y-width/2
+        self.xmin = center.z-width*0.5
+        self.ymin = center.y-width*0.5
     
     def ray_intersect(self,origin,direction):
        
@@ -17,8 +17,8 @@ class PlaneL(object):
         impact =direction * d - origin
         
         if d <= 0 or \
-            impact.y > (self.center.y + self.width/2) or impact.y < (self.center.y - self.width/2) or \
-            impact.z > (self.center.z + self.height/2) or impact.z < (self.center.z - self.height/2):
+            impact.y > (self.center.y + self.width*0.5) or impact.y < (self.center.y - self.width*0.5) or \
+            impact.z > (self.center.z + self.height*0.5) or impact.z < (self.center.z - self.height*0.5):
                 
             return None
         
@@ -26,5 +26,5 @@ class PlaneL(object):
             distance = d,
             point = impact,
             normal= self.normal,
-            porcentaje = ((impact.z - self.xmin)/self.width,(impact.y - self.ymin)/self.width)            
+            porcentaje = ((impact.z - self.xmin)/self.height,(impact.y - self.ymin)/self.width)            
             )

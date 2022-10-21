@@ -8,8 +8,8 @@ class PlaneF(object):
         self.height = height
         self.material = material
         self.normal = V3(0,0,normal)
-        self.xmin = center.x-width/2
-        self.ymin = center.y-width/2
+        self.xmin = center.x-width*0.5
+        self.ymin = center.y-height*0.5
         
 
     
@@ -19,8 +19,8 @@ class PlaneF(object):
         impact =direction * d - origin
         
         if d <= 0 or \
-            impact.x > (self.center.x + self.width/2) or impact.x < (self.center.x - self.width/2) or \
-            impact.y > (self.center.y + self.height/2) or impact.y < (self.center.y - self.height/2):
+            impact.x > (self.center.x + self.width*0.5) or impact.x < (self.center.x - self.width*0.5) or \
+            impact.y > (self.center.y + self.height*0.5) or impact.y < (self.center.y - self.height*0.5):
                 
             return None
         
@@ -28,5 +28,5 @@ class PlaneF(object):
             distance = d,
             point = impact,
             normal= self.normal,
-            porcentaje = ((impact.x - self.xmin)/self.width,(impact.y - self.ymin)/self.width)
+            porcentaje = ((impact.x - self.xmin)/self.width,(impact.y - self.ymin)/self.height)
             )
